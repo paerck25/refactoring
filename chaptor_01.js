@@ -35,7 +35,7 @@ function statement(invoice, plays) {
     }).format;
 
     for (let perf of invoice.performances) {
-        const play = plays[perf.playID];
+        const play = playFor(perf);
         let thisAmount = amountFor(perf,play);
 
         volumeCredits += Math.max(perf.audience - 30, 0);
@@ -69,6 +69,10 @@ function amountFor(aPerformance, play) {
             throw new Error(`알 수 없는 장르: ${play.type}`);
     }
     return result;
+}
+
+function playFor(aPerformance){
+    return plays[aPerformance.playID]
 }
 
 console.log(statement(invoices, plays));
