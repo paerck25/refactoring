@@ -1,38 +1,13 @@
-const plays = {
-    "hamlet": { "name": "Hamlet", "type": "tragedy" },
-    "as-like": { "name": "As You Like It", "type": "comedy" },
-    "othello": { "name": "Othello", "type": "tragedy" }
-};
-
-const invoices =
-{
-    "customer": "BigCo",
-    "performances": [
-        {
-            "playID": "hamlet",
-            "audience": 55
-        },
-        {
-            "playID": "as-like",
-            "audience": 35
-        },
-        {
-            "playID": "othello",
-            "audience": 40
-        }
-    ]
-};
-
-function statement(invoice) {
+function createStatementData(invoice, plays) {
     const statementData = {};
     statementData.customer = invoice.customer;
     statementData.performances = invoice.performances.map(enrichPerformance);
     statementData.totalAmount = totalAmount(statementData);
     statementData.totalVolumeCredits = totalVolumeCredits(statementData);
-    return renderPlainText(statementData);
+    return statementData;
 
-    function enrichPerformance(aPerformance){
-        const result = Object.assign({},aPerformance); //얕은 복사 수행
+    function enrichPerformance(aPerformance) {
+        const result = Object.assign({}, aPerformance); //얕은 복사 수행
         result.play = playFor(result);
         result.amount = amountFor(result);
         result.volumeCredits = volumeCreditsFor(result);
@@ -75,33 +50,12 @@ function statement(invoice) {
     }
 
     function totalAmount(data) {
-        return data.performances.reduce((total,p) => total + p.amount, 0);
+        return data.performances.reduce((total, p) => total + p.amount, 0);
     }
 
     function totalVolumeCredits(data) {
-        return data.performances.reduce((total,p) => total + p.volumeCredits, 0);
+        return data.performances.reduce((total, p) => total + p.volumeCredits, 0);
     }
 }
 
-function renderPlainText(data) {
-    let result = `청구 내역 (고객명 : ${data.customer})\n`;
-    for (let perf of data.performances) {
-        result += `   ${perf.play.name}: ${usd(perf.amount)} (${perf.audience}석)\n`;
-    }
-    result += `총액: ${usd(data.totalAmount)}\n`;
-    result += `적립 포인트: ${data.totalVolumeCredits}점\n`;
-    return result;
-
-    function usd(aNumber) {
-        return new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD",
-            minimumFractionDigits: 2
-        }).format(aNumber / 100);
-    }
-}
-
-
-
-
-console.log(statement(invoices, plays));
+export default createStatementData;
