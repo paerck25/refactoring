@@ -1,14 +1,23 @@
+class PerformanceCalculator{
+    constructor(aPerformance,aPlay){
+        this.performance = aPerformance;
+        this.play = aPlay
+    }
+}
+
+
 function createStatementData(invoice, plays) {
-    const statementData = {};
-    statementData.customer = invoice.customer;
-    statementData.performances = invoice.performances.map(enrichPerformance);
-    statementData.totalAmount = totalAmount(statementData);
-    statementData.totalVolumeCredits = totalVolumeCredits(statementData);
-    return statementData;
+    const result = {};
+    result.customer = invoice.customer;
+    result.performances = invoice.performances.map(enrichPerformance);
+    result.totalAmount = totalAmount(result);
+    result.totalVolumeCredits = totalVolumeCredits(result);
+    return result;
 
     function enrichPerformance(aPerformance) {
+        const calculator = new PerformanceCalculator(aPerformance,playFor(aPerformance));
         const result = Object.assign({}, aPerformance); //얕은 복사 수행
-        result.play = playFor(result);
+        result.play = calculator.play;
         result.amount = amountFor(result);
         result.volumeCredits = volumeCreditsFor(result);
         return result;
